@@ -102,6 +102,30 @@ export default function ImageAnalysisApp() {
     }
   }
 
+  const downloadLatestResponse = () => {
+  const latestAIMessage = messages.findLast(message => message.role === 'assistant');
+  
+  if (!latestAIMessage) {
+    return; // No AI messages to download
+  }
+
+  // Create blob from the content
+  const blob = new Blob([latestAIMessage.content], { type: 'text/plain' });
+  
+  // Create temporary link element
+  const element = document.createElement('a');
+  element.href = URL.createObjectURL(blob);
+  element.download = 'ai-response.txt';
+  
+  // Simulate click to trigger download
+  document.body.appendChild(element);
+  element.click();
+  
+  // Clean up
+  document.body.removeChild(element);
+  URL.revokeObjectURL(element.href);
+};
+
   return (
     <div className="container mx-auto p-4 max-w-2xl">
       <Card>
@@ -154,10 +178,22 @@ export default function ImageAnalysisApp() {
             {messages.map((message, index) => (
               <Card key={index}>
                 <CardContent className="p-3">
-                  <p>
-                    <strong>{message.role === "user" ? "You: " : "AI: "}</strong>
-                    {message.content}
-                  </p>
+                  <div className="flex justify-between items-start">
+                    <p>
+                      <strong>{message.role === "user" ? "You: " : "AI: "}</strong>
+                      {message.content}
+                    </p>
+                    {message.role === "assistant" && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => downloadLatestResponse()}
+                        className="ml-2"
+                      >
+                        Download
+                      </Button>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             ))}
