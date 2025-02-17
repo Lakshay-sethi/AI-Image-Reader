@@ -6,6 +6,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { CameraButton } from "@/components/ui/camera-button"
 
 export default function ImageAnalysisApp() {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
@@ -36,6 +37,10 @@ export default function ImageAnalysisApp() {
         console.error('Error converting image:', error);
       }
     }
+  }
+
+  const handleCameraCapture = (imageData: string) => {
+    setImageUrl(imageData);
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,13 +109,20 @@ export default function ImageAnalysisApp() {
           <CardTitle className="text-2xl font-bold">Image Analysis App</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="mb-4">
-            <Input 
-              type="file" 
-              accept="image/*" 
-              onChange={handleImageUpload} 
-              className="mb-2" 
-            />
+          <div className="mb-4 space-y-4">
+            <div className="flex gap-4 flex-wrap">
+              <div className="flex-1 min-w-[200px]">
+                <Input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handleImageUpload} 
+                  className="mb-2" 
+                />
+              </div>
+              <div className="flex-1 min-w-[200px]">
+                <CameraButton onCapture={handleCameraCapture} />
+              </div>
+            </div>
             {imageUrl && (
               <div className="relative w-[300px] h-[300px]">
                 <Image
