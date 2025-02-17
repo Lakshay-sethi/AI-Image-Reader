@@ -31,7 +31,7 @@ export async function POST(req: Request) {
         {
           role: "user",
           parts: [
-            { text: "extract the table in such a format that can be copied to excel, just the extracted table" },
+            { text: "extract the table in such a format that can be copied to excel, just the extracted table without any extra words like csv or txt in the answer, with the headings" },
             {
               inlineData: {
                 data: base64String,
@@ -54,14 +54,27 @@ export async function POST(req: Request) {
       },
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error in route:', error);
+    
+    // Type guard to check if error is an Error object
+    if (error instanceof Error) {
+        return new Response(
+            JSON.stringify({ error: error.message }), 
+            { 
+                status: 500,
+                headers: { 'Content-Type': 'application/json' }
+            }
+        );
+    }
+    
+    // Fallback for non-Error objects
     return new Response(
-      JSON.stringify({ error: error.message }), 
-      { 
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      }
+        JSON.stringify({ error: 'An unexpected error occurred' }), 
+        { 
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        }
     );
-  }
+}
 }

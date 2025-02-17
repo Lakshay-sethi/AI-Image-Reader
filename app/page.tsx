@@ -13,6 +13,7 @@ export default function ImageAnalysisApp() {
   const [messages, setMessages] = useState<Array<{ role: string; content: string }>>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  
 
   const convertBlobToBase64 = async (blob: Blob): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -43,9 +44,9 @@ export default function ImageAnalysisApp() {
     setImageUrl(imageData);
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
-  };
+  // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setInput(e.target.value);
+  // };
 
   const handleAnalyzeImage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -59,7 +60,7 @@ export default function ImageAnalysisApp() {
     try {
       const userMessage = {
         role: 'user',
-        content: input || 'extract the table in such a format that can be copied to excel, just the extracted table'
+        content: input || 'Extract the table'
      //   'Analyze this image'
       };
 
@@ -103,6 +104,41 @@ export default function ImageAnalysisApp() {
     }
   }
 
+  const downloadLatestResponse = () => {
+  const latestAIMessage = messages.findLast(message => message.role === 'assistant');
+  
+  if (!latestAIMessage) {
+    return; // No AI messages to download
+  }
+
+  // Convert the content to CSV format
+  // Assuming the content might have commas or new lines, we'll escape them
+  const csvContent = latestAIMessage.content
+    .split('\n')
+    .map(row => 
+      row.split(',')
+        .map(cell => `"${cell.replace(/"/g, '""')}"`)
+        .join(',')
+    )
+    .join('\n');
+  
+  // Create blob with CSV mime type
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  
+  // Create temporary link element
+  const element = document.createElement('a');
+  element.href = URL.createObjectURL(blob);
+  element.download = 'ai-response.csv';
+  
+  // Simulate click to trigger download
+  document.body.appendChild(element);
+  element.click();
+  
+  // Clean up
+  document.body.removeChild(element);
+  URL.revokeObjectURL(element.href);
+};
+
   return (
     <div className="container mx-auto p-4 max-w-2xl">
       <Card>
@@ -136,13 +172,13 @@ export default function ImageAnalysisApp() {
             )}
           </div>
           <form onSubmit={handleAnalyzeImage} className="space-y-2">
-            <Input
+            {/* <Input
               type="text"
               value={input}
               onChange={handleInputChange}
               placeholder="Ask a question about the image"
               className="w-full"
-            />
+            /> */}
             <Button 
               type="submit" 
               className="w-full" 
@@ -155,10 +191,22 @@ export default function ImageAnalysisApp() {
             {messages.map((message, index) => (
               <Card key={index}>
                 <CardContent className="p-3">
-                  <p>
-                    <strong>{message.role === "user" ? "You: " : "AI: "}</strong>
-                    {message.content}
-                  </p>
+                  <div className="flex justify-between items-start">
+                    <p>
+                      <strong>{message.role === "user" ? "You: " : "AI: "}</strong>
+                      {message.content}
+                    </p>
+                    {message.role === "assistant" && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => downloadLatestResponse()}
+                        className="ml-2"
+                      >
+                        Download
+                      </Button>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             ))}

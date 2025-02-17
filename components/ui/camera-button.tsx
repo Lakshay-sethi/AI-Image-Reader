@@ -59,13 +59,12 @@ export function CameraButton({ onCapture }: CameraButtonProps) {
   }, []);
 
   return (
-    <div className="space-y-2">
-      <video
+    <div className="video-container">
+      <video 
+        className="camera-feed"
         ref={videoRef}
-        autoPlay
-        playsInline
-        className="w-full max-w-[300px] rounded-md"
-        style={{ display: isCameraActive ? 'block' : 'none' }}
+        autoPlay 
+        playsInline 
       />
       {!isCameraActive ? (
         <Button onClick={startCamera} type="button" variant="outline">
