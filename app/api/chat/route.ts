@@ -31,7 +31,7 @@ export async function POST(req: Request) {
         {
           role: "user",
           parts: [
-            { text: lastMessage.content },
+            { text: "extract the table in such a format that can be copied to excel, just the extracted table" },
             {
               inlineData: {
                 data: base64String,

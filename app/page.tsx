@@ -59,7 +59,8 @@ export default function ImageAnalysisApp() {
     try {
       const userMessage = {
         role: 'user',
-        content: input || 'Analyze this image'
+        content: input || 'extract the table in such a format that can be copied to excel, just the extracted table'
+     //   'Analyze this image'
       };
 
       // Add user message to messages
