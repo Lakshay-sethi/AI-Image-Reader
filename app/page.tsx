@@ -285,8 +285,6 @@ const formatCSVToLabels = (csvContent: string) => {
                   onChange={handleImageUpload} 
                   className="mb-2" 
                 />
-              </div>
-              <div className="flex-1 min-w-[200px]">
                 <CameraButton onCapture={handleCameraCapture} />
               </div>
             </div>
@@ -327,7 +325,7 @@ const formatCSVToLabels = (csvContent: string) => {
                       {message.content}
                     </p>
                     {message.role === "assistant" && (
-                      <div className="flex gap-2">
+                      <div className="flex flex-col gap-2">
                     <Button
                       variant="outline"
                       size="sm"
