@@ -10,10 +10,14 @@ export function CameraButton({ onCapture }: CameraButtonProps) {
   const streamRef = useRef<MediaStream | null>(null);
   // Add state to track if camera is active
   const [isCameraActive, setIsCameraActive] = React.useState(false);
-
+  const constraints = {
+    video: {
+      facingMode: { exact: "environment" }  // This specifically requests the back camera
+    }
+  };
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         streamRef.current = stream;
