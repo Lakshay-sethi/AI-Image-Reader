@@ -15,7 +15,7 @@ export function CameraButton({ onCapture }: CameraButtonProps) {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
         video: { 
-          facingMode: "environment" 
+          facingMode: { exact: "environment" } 
         } 
       });
       if (videoRef.current) {
